@@ -1,4 +1,7 @@
-# Harbor Trial Test Data Usage
+# This Readme file consists of preparation guides for two datasets: Harbor Trial dataset which consists of real data and Track B dataset which contains synthetic data.
+
+
+# Harbor Trial Dataset Usage
 
 This guide documents `data/trials_data.parquet`, the released Harbor trial
 cache used for task-testing analysis and optional cache-backed evaluation. It
@@ -215,8 +218,119 @@ Harbor runner, or a cache adapter. A researcher building a new router must
 supply their own task and skill representations, retrieval model, training
 loop, and evaluation runner.
 
+
+# Track B Dataset Usage
+
+This directory is the Track B data-only release for the continual-learning-style skill retriever experiments. It contains the locked training, validation, and evaluation data used by the P6 smoke run and P7 fine-tuning/evaluation runs.
+
+The files were produced by the Track B pipeline described in the paper and its accompanying repository. The data can be used independently, but reproducing the reported model results also requires the training scripts, Python dependencies, base model weights, skill catalog, and retrieval index from the source repository.
+
+## Contents
+
+| File | Rows | Purpose |
+|---|---:|---|
+| `positives.parquet` | 255 | Tiered real positive task-skill pool |
+| `negatives.parquet` | 1,239 | Hard-negative pool |
+| `task_positive_sets.parquet` | 68 | Per-task gold positive-skill sets |
+| `train.parquet` | 13,271 | Final Track B training split |
+| `val.parquet` | 556 | Validation split and checkpoint-selection data |
+| `eval_set.parquet` | 78 | Ring 1 real in-distribution evaluation set |
+| `synthetic_eval_set.parquet` | 4,023 | Ring 1.5 held-out-skill synthetic evaluation set |
+| `ood_eval_set.parquet` | 15 | Ring 2 Terminal-Bench 2 OOD evaluation set |
+| `track_b_quality_gates.json` | - | Aggregate quality-gate audit |
+| `track_b_second_judge_audit.json` | - | Aggregate second-judge audit |
+
+The two JSON files are supplementary audit metadata. They are not required by the training or evaluation scripts. They are included to document the dataset checks and known limitations, including reward-distribution drift, sparse skill coverage, and modest inter-judge agreement.
+
+## Reproduce Track B setting with your own finetuning approach
+
+The commands below are run from the root of the source repository, with this directory passed as the dataset directory. If this folder is downloaded separately, set `TRACK_B_DATA` to its local path.
+
+```bash
+export TRACK_B_DATA="$PWD/data/trackB"
+```
+
+### Prerequisites
+
+1. Use Python 3.12 and install the repository dependencies from `requirements.txt` or `requirements-linux.txt`.
+2. Download the external 34,396-skill catalog and retrieval index using the repository's `skill_router/scripts/download_search_index.py` script.
+3. Ensure the base model `Qwen/Qwen3-Embedding-0.6B` is available. The evaluation scripts also use the frozen embedding baselines and the full skill catalog.
+
+The external skill catalog and index are intentionally not duplicated in this data release. They are required to evaluate retrieval against the full skill pool.
+
+### Finetuning and Evaluation on synthetic test set
+
+You can finetune using your methodology with the following settings described in our paper:
+
+
+## Evaluation rings
+
+- **Ring 1:** `eval_set.parquet`, real in-distribution SkillsBench evaluation.
+- **Ring 1.5:** `synthetic_eval_set.parquet`, held-out-skill synthetic evaluation.
+- **Ring 2:** `ood_eval_set.parquet`, Terminal-Bench 2 out-of-distribution evaluation.
+- **Ring 3:** downstream Harbor rollouts, see the first section of data descritpion.
+
+One example of finetuning and evaluating on true data with OOD distribution: 
+
+```bash
+python your_finetune_methodology.py \
+	--train-path "$TRACK_B_DATA/train.parquet" \
+	--val-path "$TRACK_B_DATA/val.parquet" \
+	--ckpt-dir ./output/smoke_ckpt \
+	--eval-path "$TRACK_B_DATA/ood_eval_set.parquet" 
+```
+
+## Load and preprocess the data
+
+The release includes two small utilities that require only Python, pandas, and a parquet engine such as `pyarrow`:
+
+- `load_trackb.py` loads individual parquet files and validates the complete release against the expected row counts and model-facing columns.
+- `preprocess_trackb.py` validates the release and converts selected parquet splits to newline-delimited JSON (`.jsonl`). Training rows retain their nested `negatives` records; evaluation rows retain their evaluation columns.
+
+Run the release validation:
+
+```bash
+python data/trackB/load_trackb.py \
+	--data-dir data/trackBdata
+```
+
+Print the same report as machine-readable JSON:
+
+```bash
+python data/trackB/load_trackb.py \
+	--data-dir data/trackBdata \
+	--json > trackb_validation.json
+```
+
+Convert all training and evaluation splits to a separate `processed/` directory:
+
+```bash
+python data/trackB/preprocess_trackb.py \
+	--data-dir data/trackBdata \
+	--output-dir ./trackb_processed
+```
+
+Convert only selected splits:
+
+```bash
+python data/trackB/preprocess_trackb.py \
+	--data-dir data/trackBdata \
+	--output-dir ./trackb_processed \
+	--split train.parquet \
+	--split eval_set.parquet
+```
+
+Use `--validate-only` when you want the schema and row-count checks without producing JSONL files. The original parquet files are never modified.
+
+For Python users, import the loader directly:
+
+```python
+from data.trackB.load_trackb import load_split, training_records
+
+train = load_split("train.parquet", "data/trackB")
+records = training_records("data/trackB")
+print(train.shape, records[0].keys())
+```
+
 ## Reproducibility Advice
-To facilitate future researcher's work, please consider recording the input checksum, script versions, seed, positive threshold, split fractions, Terminal-Bench policy, exception policy, and whether the model used
-`mean_effective_reward` or `label`. The generated `task_split.json` should be
-published with any derived training data so task-level isolation can be
-audited.
+To facilitate future researcher's work, please consider recording the input checksum, script versions, seed, positive threshold, split fractions。
