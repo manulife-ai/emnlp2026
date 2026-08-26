@@ -333,7 +333,7 @@ print(train.shape, records[0].keys())
 ```
 
 ## Reproducibility Advice
-To facilitate future researcher's work, please consider recording the input checksum, script versions, seed, positive threshold, split fractions。
+To facilitate future researcher's work, please consider recording the input checksum, script versions, seed, positive threshold, split fractions.
 
 ## Credits and Citations
 
