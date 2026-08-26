@@ -1,5 +1,5 @@
 # When Synthetic Data Hurts: On Catastrophic Forgetting in Skill Retrieval for LLM Agents
-This Readme file consists of preparation guides for the two datasets employed in our paper: Harbor Trial dataset which consists of real data and Track B dataset which contains synthetic data.
+This Readme file consists of preparation guides for the two datasets employed in our paper: Harbor Trial dataset which consists of real data and Track B dataset which contains synthetic data. You can follow this guide to finetune your own solutions and recipes using our paper's data.
 
 # Harbor Trial Dataset Usage
 
