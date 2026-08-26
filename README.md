@@ -1,5 +1,5 @@
-# This Readme file consists of preparation guides for two datasets: Harbor Trial dataset which consists of real data and Track B dataset which contains synthetic data.
-
+# When Synthetic Data Hurts: On Catastrophic Forgetting in Skill Retrieval for LLM Agents
+This Readme file consists of preparation guides for the two datasets employed in our paper: Harbor Trial dataset which consists of real data and Track B dataset which contains synthetic data.
 
 # Harbor Trial Dataset Usage
 
@@ -334,3 +334,17 @@ print(train.shape, records[0].keys())
 
 ## Reproducibility Advice
 To facilitate future researcher's work, please consider recording the input checksum, script versions, seed, positive threshold, split fractions。
+
+## Credits and Citations
+
+If you use this dataset or the accompanying resources, please cite our paper
+in the proceedings of EMNLP:
+
+```bibtex
+@inproceedings{murtaza2026synthetic,
+  title     = {When Synthetic Data Hurts: On Catastrophic Forgetting in Skill Retrieval for LLM Agents},
+  author    = {Syed Shariyar Murtaza, Yifan Nie, Utkarsh Soni, Eugene Wen and Arvid Frydenlund},
+  booktitle = {Proceedings of the 2026 Conference on Empirical Methods in Natural Language Processing},
+  year      = {2026}
+}
+```
