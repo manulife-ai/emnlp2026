@@ -228,11 +228,11 @@ The files were produced by the Track B pipeline described in the paper and its a
 
 | File | Rows | Unique Task Queries | Purpose |
 |---|---:|---:|---|
-| `train.parquet` | 13,271 | 5,874 |Track B training split |
+| `train.parquet` | **13,271** | 5,874 |Track B training split |
 | `val.parquet` | 556 | 149 | Validation split and checkpoint-selection data |
-| `eval_set.parquet` | 78 | 21 | Ring 1 real in-distribution evaluation set |
-| `synthetic_eval_set.parquet` | 4,023 | 2,414 | Ring 2 held-out-skill synthetic evaluation set |
-| `ood_eval_set.parquet` | 15 | 10 | Ring 3 Terminal-Bench 2 OOD evaluation set |
+| `eval_set.parquet` | 78 | **21** | Ring 1 real in-distribution evaluation set |
+| `synthetic_eval_set.parquet` | 4,023 | **2,414** | Ring 2 held-out-skill synthetic evaluation set |
+| `ood_eval_set.parquet` | 15 | **10** | Ring 3 Terminal-Bench 2 OOD evaluation set |
 | `positives.parquet` | 255 | 68 | Tiered real positive task-skill pool |
 | `negatives.parquet` | 1,239 | 47 | Hard-negative pool |
 | `track_b_quality_gates.json` | - | - | Aggregate quality-gate audit |
