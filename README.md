@@ -234,8 +234,8 @@ The files were produced by the Track B pipeline described in the paper and its a
 | `train.parquet` | 13,271 | Final Track B training split |
 | `val.parquet` | 556 | Validation split and checkpoint-selection data |
 | `eval_set.parquet` | 78 | Ring 1 real in-distribution evaluation set |
-| `synthetic_eval_set.parquet` | 4,023 | Ring 1.5 held-out-skill synthetic evaluation set |
-| `ood_eval_set.parquet` | 15 | Ring 2 Terminal-Bench 2 OOD evaluation set |
+| `synthetic_eval_set.parquet` | 4,023 | Ring 2 held-out-skill synthetic evaluation set |
+| `ood_eval_set.parquet` | 15 | Ring 3 Terminal-Bench 2 OOD evaluation set |
 | `track_b_quality_gates.json` | - | Aggregate quality-gate audit |
 | `track_b_second_judge_audit.json` | - | Aggregate second-judge audit |
 
