@@ -10,15 +10,14 @@ results from earlier Harbor run trajectories and meant for research comunity to 
 
 ## Data Release Statistics
 
-The trial data file statistics are as follows.
+The trial data file statistics are as follows. There are in total **1084 valid trials** (which return valid outcomes without exception).
 
-| Check | Result |
+| Item | Result |
 |---|---:|
-| Rows / columns | 1,423 / 29 |
+| Total Rows / columns | 1,423 / 29 |
+| **Valid Trials (without exception)** | **1084** | 
 | Benchmarks | 609 SkillsBench rows, 814 Terminal-Bench rows |
 | Unique task names | 173 |
-| Unique `(task_name, trial_name)` keys | 1,423 |
-| Unique `trial_uri` values | 1,423 |
 | Missing task or trial identifiers | 0 |
 | Missing rewards | 208 |
 | Missing soft rewards and test counts | 307 |
@@ -266,11 +265,10 @@ You can finetune using your methodology with the following settings described in
 ## Evaluation rings
 
 - **Ring 1:** `eval_set.parquet`, real in-distribution SkillsBench evaluation.
-- **Ring 1.5:** `synthetic_eval_set.parquet`, held-out-skill synthetic evaluation.
-- **Ring 2:** `ood_eval_set.parquet`, Terminal-Bench 2 out-of-distribution evaluation.
-- **Ring 3:** downstream Harbor rollouts, see the first section of data descritpion.
+- **Ring 2:** `synthetic_eval_set.parquet`, held-out-skill synthetic evaluation.
+- **Ring 3:** `ood_eval_set.parquet`, Terminal-Bench 2.0 out-of-distribution evaluation.
 
-One example of finetuning and evaluating on true data with OOD distribution: 
+One example of finetuning and evaluating on Terminal-Bench 2.0 data with OOD distribution is as follows: 
 
 ```bash
 python your_finetune_methodology.py \
