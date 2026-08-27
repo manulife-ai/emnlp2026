@@ -1,0 +1,83 @@
+{
+  "n_sampled": 300,
+  "n_scored": 300,
+  "n_failed": 0,
+  "kappa_passes_judge": 0.28,
+  "raw_agreement_passes_judge": 0.64,
+  "j1_pass_rate": 0.5,
+  "j2_pass_rate": 0.82,
+  "pass_rate_delta": 0.31999999999999995,
+  "per_score": {
+    "task_realism": {
+      "n": 300,
+      "mean_j1": 4.126666666666667,
+      "mean_j2": 4.383333333333334,
+      "mean_diff_j1_minus_j2": -0.2566666666666668,
+      "mean_abs_delta": 0.42333333333333334,
+      "pearson": 0.703928433977451,
+      "paired_z_p": 1.2512213487525514e-12,
+      "paired_z": -7.099601312880449,
+      "wilcoxon_p": 2.257779415102998e-09,
+      "ks_stat": 0.24666666666666667,
+      "ks_p": 2.0179572425111938e-08
+    },
+    "skill_necessity": {
+      "n": 300,
+      "mean_j1": 4.44,
+      "mean_j2": 4.45,
+      "mean_diff_j1_minus_j2": -0.009999999999999787,
+      "mean_abs_delta": 0.3233333333333333,
+      "pearson": 0.7879718230010375,
+      "paired_z_p": 0.7799983102696924,
+      "paired_z": -0.2793212364565226,
+      "wilcoxon_p": 0.6300718266687295,
+      "ks_stat": 0.07333333333333333,
+      "ks_p": 0.3958302746926979
+    },
+    "skill_sufficiency": {
+      "n": 300,
+      "mean_j1": 3.63,
+      "mean_j2": 3.9433333333333334,
+      "mean_diff_j1_minus_j2": -0.31333333333333346,
+      "mean_abs_delta": 0.5066666666666667,
+      "pearson": 0.4517551445176682,
+      "paired_z_p": 4.916733686854968e-12,
+      "paired_z": -6.9079584669673055,
+      "wilcoxon_p": 7.950839197108548e-09,
+      "ks_stat": 0.14333333333333334,
+      "ks_p": 0.004164755648201053
+    },
+    "reward_plausibility": {
+      "n": 300,
+      "mean_j1": 4.096666666666667,
+      "mean_j2": 3.8,
+      "mean_diff_j1_minus_j2": 0.29666666666666686,
+      "mean_abs_delta": 0.81,
+      "pearson": 0.16200704224608192,
+      "paired_z_p": 8.153460682169822e-07,
+      "paired_z": 4.9316579323276954,
+      "wilcoxon_p": 4.066419693842921e-09,
+      "ks_stat": 0.37333333333333335,
+      "ks_p": 5.333457122241683e-19
+    }
+  },
+  "mcnemar_passes_judge": {
+    "n11_both_pass": 144,
+    "n10_j1pass_j2fail": 6,
+    "n01_j1fail_j2pass": 102,
+    "n00_both_fail": 48,
+    "exact_binomial_p": 1.2514492494239995e-23
+  },
+  "pooled_axis_ks": {
+    "n_j1": 1200,
+    "n_j2": 1200,
+    "ks_stat": 0.0575,
+    "ks_p": 0.03782090990671419
+  },
+  "kappa_gate": 0.6,
+  "score_delta_gate": 1.0,
+  "max_score_delta": 0.81,
+  "primary_judge_model": "gpt-5.5-2",
+  "second_judge_model": "claude-opus-4-8",
+  "pass": false
+}
