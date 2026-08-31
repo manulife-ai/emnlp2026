@@ -1,8 +1,8 @@
 # When Synthetic Data Hurts: On Catastrophic Forgetting in Skill Retrieval for LLM Agents
 This Readme file consists of preparation guides for the two datasets employed in our paper: **Harbor Trial dataset** which consists of real data and **Track B** dataset which contains synthetic data. You can follow this guide to finetune your own solutions and recipes using our paper's data.
 
-# Harbor Trial Dataset Usage
-This guide documents the usage of `data/trials_data.parquet`, the Harbor trials we used in our paper. It contains task execution tracjectories and results for research comunity to train new skill routers or perform skill retrieval researches. Note that you will need to install and configure the Harbor envinronment on your own compute from [https://www.harborframework.com](https://www.harborframework.com).
+# Dataset 1: Harbor Trial Dataset
+This guide section documents the usage of `data/trials_data.parquet`, the Harbor trials we used in our paper. It contains task execution tracjectories and results for research comunity to train new skill routers or perform skill retrieval researches. Note that you will need to install and configure the Harbor envinronment on your own compute from [https://www.harborframework.com](https://www.harborframework.com).
 
 ## Harbor Data Statistics
 
@@ -89,7 +89,7 @@ Our harbor dataset records two related but non-equivalent quantities:
   by `HarborCache` when replaying a cached result. It should be interpreted
   together with `exception_type`, since a row with exception indicates the task isn't completed successfully.
 
-- **`soft_reward`:** a post-processed result score. For a CTRF file with
+- **`soft_reward`:** a post-processed result score. For a CTRF file (Harbor's Common Test Report file depicting the outcome of a task execution) with
   `n_tests_total` tests, it is
 
   $$\mathrm{soft\_reward} = \frac{\mathrm{n}_{\mathrm{tests\_passed}}}{\mathrm{n}_{\mathrm{tests\_total}}}.$$
@@ -192,11 +192,11 @@ For soft-label training, use `mean_effective_reward`. For binary training,
 use `label`. Keep `n_trials` as a confidence/count feature if desired. Note that you need to install and configure your own Harbor environment from [https://www.harborframework.com](https://www.harborframework.com).
 
 
-# Track B Dataset Usage
+# Dataset 2: Track B Dataset used in our paper
 
-This directory is the Track B data-only release for the continual-learning-style skill retrieval experiments. It contains the locked training, validation, and evaluation data used in the Ring 1, Ring 2 and Ring 3 runs mentioned in the paper.
+This section of the guide describes the Track B dataset used in our paper. It contains the training, validation, and evaluation data used in the Ring 1 (in-distribution real test data), Ring 2 (in-distribution synthetic test data) and Ring 3 (OOD real test data) runs described in the paper.
 
-The purpose of releasing the data is to give researchers opportunities to design their own skill retriever and rerankers and explore their new mitigation methodologies for catastrophic forgetting phenomenon, and evaluate on the common benchmark to ground the performance of their work.
+The purpose of releasing this set data is to give researchers opportunities to design their own skill retriever and rerankers and explore their new mitigation methodologies for catastrophic forgetting phenomenon, and evaluate on the common benchmark to ground the performance of their work.
 
 ## Contents
 
@@ -214,51 +214,45 @@ The purpose of releasing the data is to give researchers opportunities to design
 
 The two JSON files are supplementary audit metadata. They are not required by the training or evaluation scripts. They are included to document the dataset checks and known limitations, including reward-distribution drift, sparse skill coverage, and modest inter-judge agreement.
 
-## Reproduce Track B setting with your own finetuning approach
+## Run Track B setting with your own finetuning approach
 
-The commands below are run from the root of the source repository, with this directory passed as the dataset directory. If this folder is downloaded separately, set `TRACK_B_DATA` to its local path.
+To finetune and test your own skill retrieval/reranking system using our data, follow the below steps. 
+First, set `TRACK_B_DATA` to its local path for easy path references in future commands.
 
 ```bash
-export TRACK_B_DATA="$PWD/data/trackB"
+export TRACK_B_DATA="./data/trackB"
 ```
 
-### Prerequisites
+### Python libs and environment setups
 
 1. Use Python 3.12 and install the repository dependencies from `requirements.txt` or `requirements-linux.txt`.
-2. Download the external 34,396-skill catalog and retrieval index using the repository's `skill_router/scripts/download_search_index.py` script.
-3. Ensure the base model `Qwen/Qwen3-Embedding-0.6B` is available. The evaluation scripts also use the frozen embedding baselines and the full skill catalog.
+2. Ensure the base model `Qwen/Qwen3-Embedding-0.6B` [Link](https://huggingface.co/Qwen/Qwen3-0.6B) is available, since this is the baseline model to be compared with in our paper. It is recommended to be compared against your new skill retrival/reranking system as well.
 
-The external skill catalog and index are intentionally not duplicated in this data release. They are required to evaluate retrieval against the full skill pool.
 
 ### Finetuning and Evaluation on synthetic test set
 
 You can finetune using your methodology with the following settings described in our paper:
 
+## Training Data for finetuning
+`data/trackB/train.parquet`
 
-## Evaluation Rings (Scenarios)
+## validation data
+`data/trackB/val.parquet`
+
+## Evaluation Data for Different Rings (Scenarios)
 
 - **Ring 1:** `eval_set.parquet`, real in-distribution SkillsBench evaluation.
 - **Ring 2:** `synthetic_eval_set.parquet`, held-out-skill synthetic evaluation.
 - **Ring 3:** `ood_eval_set.parquet`, Terminal-Bench 2.0 out-of-distribution evaluation.
 
-One example of finetuning and evaluating on Terminal-Bench 2.0 data with OOD distribution is as follows: 
-
-```bash
-python your_finetune_methodology.py \
-	--train-path "$TRACK_B_DATA/train.parquet" \
-	--val-path "$TRACK_B_DATA/val.parquet" \
-	--ckpt-dir ./output/smoke_ckpt \
-	--eval-path "$TRACK_B_DATA/ood_eval_set.parquet" 
-```
-
 ## Load and preprocess the data
 
 The scripts contains preprocessing codes to format the the data in the same way that our papaer used.
 
-- `load_trackb.py` loads individual parquet files and validates the complete release against the expected row counts and model-facing columns.
+- `load_trackb.py` loads individual parquet files and validates the dataframe against the expected row counts and model-facing columns, to check data integrity.
 - `preprocess_trackb.py` validates the release and converts selected parquet splits to newline-delimited JSON (`.jsonl`). Training rows retain their nested `negatives` records; evaluation rows retain their evaluation columns.
 
-Run the release validation:
+Run the following data processing commands:
 
 ```bash
 python data/trackB/load_trackb.py \
@@ -281,30 +275,16 @@ python data/trackB/preprocess_trackb.py \
 	--output-dir ./trackb_processed
 ```
 
-Convert only selected splits:
+Convert only selected splits (e.g. training fold on):
 
 ```bash
 python data/trackB/preprocess_trackb.py \
 	--data-dir data/trackBdata \
 	--output-dir ./trackb_processed \
-	--split train.parquet \
-	--split eval_set.parquet
+	--split train.parquet
 ```
 
-Use `--validate-only` when you want the schema and row-count checks without producing JSONL files. The original parquet files are never modified.
-
-For Python users, import the loader directly:
-
-```python
-from data.trackB.load_trackb import load_split, training_records
-
-train = load_split("train.parquet", "data/trackB")
-records = training_records("data/trackB")
-print(train.shape, records[0].keys())
-```
-
-## Reproducibility Advice
-To facilitate future researcher's work, please consider recording the input checksum, script versions, seed, positive threshold, split fractions.
+Once the data preprocessing is done, you can use the data in the output jsonl file to finetune your own skill retriever/reranker and evaluate its performance on the common ground that we presented in our paper.
 
 ## Credits and Citations
 
