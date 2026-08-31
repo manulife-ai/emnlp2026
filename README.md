@@ -1,5 +1,5 @@
 # When Synthetic Data Hurts: On Catastrophic Forgetting in Skill Retrieval for LLM Agents
-This Readme file serves as a preparation guide for the two datasets we use in our paper: **Harbor Trial dataset** which consists of real data and **Track B** dataset which contains synthetic data. You can follow this guide to finetune your own solutions and recipes using our paper's data.
+This Readme file serves as a guide for using the two datasets we presented in our paper: **Harbor Trial dataset** which consists of real data and **Track B** dataset which contains synthetic data. You can follow this guide to finetune your own solutions and recipes using our paper's data.
 
 # Dataset 1: Harbor Trial Dataset
 This guide section documents the usage of `data/trials_data.parquet`, the Harbor trials we used in our paper. It contains task execution tracjectories and results for research comunity to train new skill routers or perform skill retrieval researches. Note that you will need to install and configure the Harbor envinronment on your own compute from [https://www.harborframework.com](https://www.harborframework.com).
