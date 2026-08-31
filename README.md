@@ -25,20 +25,15 @@ The file has no duplicate trial keys, invalid soft-reward ranges, invalid test
 counts, or malformed JSON in the JSON-encoded columns. The following are
 important semantic issues, not file-corruption errors:
 
-1. `reward` and `soft_reward` are different signals. `reward` is the scalar
-  Harbor recorded for the trial; it is extracted from
-  `verifier_result.rewards.reward`, then top-level `reward`, then
-  `verifier/reward.txt`. It is not guaranteed to be binary: 39 rows contain
-  fractional values.
-2. `soft_reward` is a derived verifier-coverage metric, computed as
+1. `soft_reward` is a derived metric, computed as
   `n_tests_passed / n_tests_total` from `verifier/ctrf.json`. It is in
   `[0, 1]` and is available only when a usable CTRF test list exists.
-3. `soft_reward` is the preferred for the outcome signal to repair the finetuning data, always use `soft_reward` than `reward` unless `soft_reward` is not available for certain rows. 
+2. `soft_reward` is the preferred for the outcome signal to repair the finetuning data, always use `soft_reward` than `reward` unless `soft_reward` is not available for certain rows. 
    In that case, use `reward` as a surrogate.
-4. There are 339 exception rows. Some have a recorded reward, but those
+3. There are 339 exception rows. Some have a recorded reward, but those
    rewards may describe a partial or failed execution. Exclude exception rows
    for clean performance summaries unless the failure analysis is the goal.
-5. 79 task names occur in both benchmarks. Always group or join by
+4. 79 task names occur in both benchmarks. Always group or join by
    `(benchmark, task_name)`, never by `task_name` alone.
 
 ## Schema
