@@ -2,7 +2,7 @@
 This Readme file serves as a guide for using the two datasets we presented in our paper: **Harbor Trial dataset** which consists of real task execution data and **Track B** dataset which contains synthetic data. Those datasets are intended to finetune your own skill retrieval solutions and recipes and serve as a common ground to compare new catastrophic forgetting mitigation methodologies with our proposed methods.
 
 # Dataset 1: Harbor Trial Dataset
-This section documents the usage of `data/trials_data.parquet`, the Harbor trials we used in our paper. It contains task execution tracjectories and results for research comunity to train new skill routers or perform skill retrieval researches. Note that you will need to install and configure the Harbor envinronment on your own compute from [https://www.harborframework.com](https://www.harborframework.com).
+This section documents the usage of `data/trials_data.parquet`, the Harbor trials we used in our paper. It contains task execution tracjectories and results we collected for research comunity to train new skill routers or perform skill retrieval researches.
 
 ## Harbor Data Statistics
 
@@ -33,8 +33,8 @@ important semantic issues, not file-corruption errors:
 2. `soft_reward` is a derived verifier-coverage metric, computed as
   `n_tests_passed / n_tests_total` from `verifier/ctrf.json`. It is in
   `[0, 1]` and is available only when a usable CTRF test list exists.
-3. `reward > 0` and `soft_reward > 0` are collected and calculated to represent different angle of the trial's outcome. 
-   Do not derive one from the other. They represent separate recorded signals.
+3. `soft_reward` is the preferred for the outcome signal to repair the finetuning data, always use `soft_reward` than `reward` unless `soft_reward` is not available for certain rows. 
+   In that case, use `reward` as a surrogate.
 4. There are 339 exception rows. Some have a recorded reward, but those
    rewards may describe a partial or failed execution. Exclude exception rows
    for clean performance summaries unless the failure analysis is the goal.
@@ -174,17 +174,6 @@ python build_training_pairs.py \
   --positive-threshold 0.5 \
   --seed 42
 ```
-
-## Use the prepared Harbor trial dataset in a new Skill Retrieval system.
-
-Load `train_pairs.parquet` for model fitting and use
-`validation_pairs.parquet` for threshold or hyperparameter selection. Keep
-`test_pairs.parquet` untouched until final reporting. Use `task_id` or the
-`(benchmark, task_name)` columns as the grouping key; do not group by
-`task_name` alone.
-
-For soft-label training, use `mean_effective_reward`. For binary training,
-use `label`. Keep `n_trials` as a confidence/count feature if desired. Note that you need to install and configure your own Harbor environment from [https://www.harborframework.com](https://www.harborframework.com).
 
 
 # Dataset 2: Track B Dataset used in our paper
