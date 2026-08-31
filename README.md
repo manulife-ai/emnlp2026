@@ -28,7 +28,7 @@ important semantic issues, not file-corruption errors:
 1. `soft_reward` is a derived metric, computed as
   `n_tests_passed / n_tests_total` from `verifier/ctrf.json`. It is in
   `[0, 1]` and is available only when a usable CTRF test list exists.
-2. `soft_reward` is the preferred for the outcome signal to construct the finetuning data, always use `soft_reward` than `reward` unless `soft_reward` is not available for certain rows. 
+2. `soft_reward` is the preferred outcome signal to construct the finetuning data, always use `soft_reward` than `reward` unless `soft_reward` is not available for certain rows. 
    In that case, use `reward` as a surrogate.
 3. There are 339 exception rows. Some have a recorded reward, but those
    rewards may describe a partial or failed execution. Exclude exception rows
