@@ -38,12 +38,8 @@ important semantic issues, not file-corruption errors:
 4. There are 339 exception rows. Some have a recorded reward, but those
    rewards may describe a partial or failed execution. Exclude exception rows
    for clean performance summaries unless the failure analysis is the goal.
-5. Seventy-nine task names occur in both benchmarks. Always group or join by
+5. 79 task names occur in both benchmarks. Always group or join by
    `(benchmark, task_name)`, never by `task_name` alone.
-6. `cost_usd` is entirely null in this release. Token columns are available
-   for most rows, but cost analysis cannot be reproduced from this file alone.
-7. `trajectory_path` values are historical source paths and may not exist on
-   another machine. The parquet does not ship the referenced trajectories.
 
 ## Schema
 
