@@ -88,7 +88,7 @@ Our harbor dataset records two related but non-equivalent quantities:
 - **`reward`:** the raw Harbor result scalar for the trial. It is the value used
   by `HarborCache` when replaying a cached result. It should be interpreted
   together with `exception_type`, since a row with exception indicates the task isn't completed successfully.
-  
+
 - **`soft_reward`:** a post-processed result score. For a CTRF file with
   `n_tests_total` tests, it is
 
@@ -98,30 +98,16 @@ Our harbor dataset records two related but non-equivalent quantities:
   `n_tests_total`, matching the harvest implementation. If CTRF is missing or
   contains no tests, `soft_reward` and the test-count fields are null.
 
-For training data construction, our protocol define:
+For training data construction, `soft_reward` is preferred as the task-skill supervision signal. The raw `reward` is the fallback when
+`soft_reward` is unavailable. Rows where both values are missing are omitted from task-skill training pairs.
 
-```python
-effective_reward = soft_reward.fillna(reward)
-```
-
-Thus `soft_reward` is preferred as the task-skill supervision value and is
-also used for positive thresholds such as `mean_soft_reward > 0.5`; it is not
-merely a display or filtering field. The raw `reward` is the fallback when
-`soft_reward` is unavailable. Rows where both values are missing are omitted
-from task-skill training pairs. This `effective_reward` rule is separate from
-the Harbor cache, which loads the raw `reward` field.
-
-## Standalone Release Contents
-
-Researchers need only these files from this release:
+## Harbor Data Preparation Scripts
 
 - `data/trials_data.parquet`
 - `preprocess_trials.py`
 - `build_training_pairs.py`
 
-The scripts use only Python, pandas, and PyArrow. They do not import the
-private skill-router package, Harbor, benchmark task directories, search
-indexes, model checkpoints, or repository-specific configuration.
+This set of scripts prepares the harbor trials dataset in the same format that our papers uses. Please run in the following steps.
 
 ## Install Dependencies
 
@@ -133,7 +119,7 @@ pip install pandas pyarrow
 
 ## Preprocess the Trial Data
 
-Run this first. It validates required columns and duplicate trial identities,
+This step validates required columns and duplicate trial identities,
 decodes JSON columns, adds `effective_reward`, and marks clean/scored and
 positive-candidate rows.
 
@@ -143,7 +129,7 @@ python preprocess_trials.py \
   output/normalized_trials.parquet
 ```
 
-Important generated columns:
+The key columns added after the processing:
 
 - `effective_reward`: `soft_reward` when present, otherwise `reward`.
 - `is_clean_scored`: no exception and a non-null effective reward.
@@ -160,7 +146,7 @@ python build_training_pairs.py \
   output/training_pairs
 ```
 
-The script removes exception rows and rows without injected skills, explodes
+This step removes exception rows and rows without injected skills, explodes
 each injected skill into a task-skill observation, and averages repeated
 observations by `(benchmark, task_name, skill_id)`. It writes:
 
@@ -173,7 +159,7 @@ observations by `(benchmark, task_name, skill_id)`. It writes:
 The default split is 70% train, 15% validation, and 15% test for each
 benchmark. All rows for a benchmark-qualified task remain in one partition.
 Terminal-Bench tasks are test-only by default, preserving the OOD evaluation
-policy. To opt into splitting Terminal-Bench across train, validation, and
+nature. To opt into splitting Terminal-Bench across train, validation, and
 test, pass `--include-terminalbench-train`.
 
 The pair table contains:
@@ -194,7 +180,7 @@ python build_training_pairs.py \
   --seed 42
 ```
 
-## Use the Outputs in a New Skill Router
+## Use the prepared Harbor trial dataset in a new Skill Retrieval system.
 
 Load `train_pairs.parquet` for model fitting and use
 `validation_pairs.parquet` for threshold or hyperparameter selection. Keep
@@ -203,15 +189,7 @@ Load `train_pairs.parquet` for model fitting and use
 `task_name` alone.
 
 For soft-label training, use `mean_effective_reward`. For binary training,
-use `label`. Keep `n_trials` as a confidence/count feature if desired. Do not
-use `reward` and `soft_reward` interchangeably, and do not treat exception
-rows as ordinary negative examples without a deliberate failure model.
-
-This release provides historical trial outcomes and preprocessing targets. It
-does not provide task instructions, skill documents, a retrieval index, a
-Harbor runner, or a cache adapter. A researcher building a new router must
-supply their own task and skill representations, retrieval model, training
-loop, and evaluation runner.
+use `label`. Keep `n_trials` as a confidence/count feature if desired. Note that you need to install and configure your own Harbor environment from [https://www.harborframework.com](https://www.harborframework.com).
 
 
 # Track B Dataset Usage
@@ -257,7 +235,7 @@ The external skill catalog and index are intentionally not duplicated in this da
 You can finetune using your methodology with the following settings described in our paper:
 
 
-## Evaluation rings
+## Evaluation Rings (Scenarios)
 
 - **Ring 1:** `eval_set.parquet`, real in-distribution SkillsBench evaluation.
 - **Ring 2:** `synthetic_eval_set.parquet`, held-out-skill synthetic evaluation.
@@ -275,7 +253,7 @@ python your_finetune_methodology.py \
 
 ## Load and preprocess the data
 
-The release includes two small utilities that require only Python, pandas, and a parquet engine such as `pyarrow`:
+The scripts contains preprocessing codes to format the the data in the same way that our papaer used.
 
 - `load_trackb.py` loads individual parquet files and validates the complete release against the expected row counts and model-facing columns.
 - `preprocess_trackb.py` validates the release and converts selected parquet splits to newline-delimited JSON (`.jsonl`). Training rows retain their nested `negatives` records; evaluation rows retain their evaluation columns.
