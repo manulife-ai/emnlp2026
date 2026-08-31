@@ -220,9 +220,9 @@ loop, and evaluation runner.
 
 # Track B Dataset Usage
 
-This directory is the Track B data-only release for the continual-learning-style skill retriever experiments. It contains the locked training, validation, and evaluation data used by the P6 smoke run and P7 fine-tuning/evaluation runs.
+This directory is the Track B data-only release for the continual-learning-style skill retrieval experiments. It contains the locked training, validation, and evaluation data used in the Ring 1, Ring 2 and Ring 3 runs mentioned in the paper.
 
-The files were produced by the Track B pipeline described in the paper and its accompanying repository. The data can be used independently, but reproducing the reported model results also requires the training scripts, Python dependencies, base model weights, skill catalog, and retrieval index from the source repository.
+The purpose of releasing the data is to give researchers opportunities to design their own skill retriever and rerankers and explore their new mitigation methodologies for catastrophic forgetting phenomenon, and evaluate on the common benchmark to ground the performance of their work.
 
 ## Contents
 
