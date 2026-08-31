@@ -1,14 +1,10 @@
 # When Synthetic Data Hurts: On Catastrophic Forgetting in Skill Retrieval for LLM Agents
-This Readme file consists of preparation guides for the two datasets employed in our paper: Harbor Trial dataset which consists of real data and Track B dataset which contains synthetic data. You can follow this guide to finetune your own solutions and recipes using our paper's data.
+This Readme file consists of preparation guides for the two datasets employed in our paper: **Harbor Trial dataset** which consists of real data and **Track B** dataset which contains synthetic data. You can follow this guide to finetune your own solutions and recipes using our paper's data.
 
 # Harbor Trial Dataset Usage
+This guide documents the usage of `data/trials_data.parquet`, the Harbor trials we used in our paper. It contains task execution tracjectories and results for research comunity to train new skill routers or perform skill retrieval researches. Note that you will need to install and configure the Harbor envinronment on your own compute from [https://www.harborframework.com](https://www.harborframework.com).
 
-This guide documents `data/trials_data.parquet`, the released Harbor trial
-cache used for task-testing analysis and optional cache-backed evaluation. It
-is historical execution data, not a standalone task runner: it contains
-results from earlier Harbor run trajectories and meant for research comunity to train new skill routers or perform skill retrieval researches. It does not contain the full benchmark environments, or solver trajectories themselves.
-
-## Data Release Statistics
+## Harbor Data Statistics
 
 The trial data file statistics are as follows. There are in total **1084 valid trials** (which return valid outcomes without exception).
 
@@ -87,13 +83,13 @@ listed as JSON strings must be decoded with `json.loads` before use.
 
 ## Reward Columns
 
-The harvest code records two related but non-equivalent quantities:
+Our harbor dataset records two related but non-equivalent quantities:
 
-- **`reward`:** the Harbor result scalar for the trial. It is the value used
+- **`reward`:** the raw Harbor result scalar for the trial. It is the value used
   by `HarborCache` when replaying a cached result. It should be interpreted
-  together with `exception_type`, because a reward recorded on an exception
-  row may not represent a completed verifier run.
-- **`soft_reward`:** a post-processed test-level score. For a CTRF file with
+  together with `exception_type`, since a row with exception indicates the task isn't completed successfully.
+  
+- **`soft_reward`:** a post-processed result score. For a CTRF file with
   `n_tests_total` tests, it is
 
   $$\mathrm{soft\_reward} = \frac{\mathrm{n}_{\mathrm{tests\_passed}}}{\mathrm{n}_{\mathrm{tests\_total}}}.$$
@@ -102,7 +98,7 @@ The harvest code records two related but non-equivalent quantities:
   `n_tests_total`, matching the harvest implementation. If CTRF is missing or
   contains no tests, `soft_reward` and the test-count fields are null.
 
-For retrieval-data construction, the training scripts define:
+For training data construction, our protocol define:
 
 ```python
 effective_reward = soft_reward.fillna(reward)
