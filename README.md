@@ -115,8 +115,7 @@ pip install pandas pyarrow
 
 ## Preprocess the Trial Data
 
-This step validates required columns and duplicate trial identities,
-decodes JSON columns, adds `effective_reward`, and marks clean/scored and
+This step validates required columns decodes JSON columns, adds `effective_reward`, and marks clean/scored and
 positive-candidate rows.
 
 ```bash
