@@ -11,7 +11,7 @@ The trial data file statistics are as follows. There are in total **1084 valid t
 | Item | Result |
 |---|---:|
 | Total Rows / columns | 1,423 / 29 |
-| **Valid Trials (without exception)** | **1084** | 
+| **Total Rows with Soft Rewards** | **1,116** | 
 | Benchmarks | 609 SkillsBench rows, 814 Terminal-Bench rows |
 | Unique task names | 173 |
 | Missing task or trial identifiers | 0 |
