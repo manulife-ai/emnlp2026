@@ -1,9 +1,9 @@
 # When Synthetic Data Hurts: On Catastrophic Forgetting in Skill Retrieval for LLM Agents
 This Readme file serves as a guide for using the two datasets we presented in our paper: **Harbor Trial dataset** which consists of real task execution data and **Track B** dataset which contains synthetic data. Those datasets are intended to finetune your own skill retrieval solutions and recipes and serve as a common ground to compare new catastrophic forgetting mitigation methodologies with our proposed methods.
 
-This Readme also has an example lora finetuning code to mimic the conservative anchor regularization setting described in the Table 3 of our paper.
+This Readme also has an **example script** to reproduce the conservative anchor regularization experiment described in the Table 3 of our paper. Researchers can use it as a base to deveoper new catastropic-forgetting mitigation methodologies.
 
-# Dataset 1: Harbor Trial Dataset
+# Part 1: Harbor Trial Dataset Details
 This section documents the usage of `data/trials_data.parquet`, the Harbor trials we used in our paper. It contains task execution tracjectories and results we collected for research comunity to train new skill routers or perform skill retrieval researches.
 
 ## Harbor Data Statistics
@@ -173,7 +173,7 @@ python build_training_pairs.py \
 ```
 
 
-# Dataset 2: Track B Dataset used in our paper
+# Part 2: Track B Dataset used in our paper
 
 This section of the guide describes the Track B dataset used in our paper. It contains the training, validation, and evaluation data used in the Ring 1 (in-distribution real test data), Ring 2 (in-distribution synthetic test data) and Ring 3 (OOD real test data) runs described in the paper.
 
@@ -267,7 +267,7 @@ python data/trackB/preprocess_trackb.py \
 
 Once the data preprocessing is done, you can use the data in the output jsonl file to finetune your own skill retriever/reranker and evaluate its performance on this common dataset that we presented in our paper.
 
-# Sample Script for Conservative-Anchor-based Finetuning
+# Part 3: Sample Script for Conservative-Anchor-based Finetuning
 
 `trackb_cons_anchor_example.py` reproduces the **conservative embedding-anchor** rows of Table 3 from *When Synthetic Data Hurts: On Catastrophic Forgetting in Skill Retrieval for LLM Agents*.
 
