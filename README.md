@@ -392,7 +392,7 @@ Small variations are expected because Ring 1 and Ring 3 contain only 21 and 10 q
 Use `--max-eval-queries` only for a smoke test. It changes the reported metrics and should not be used for a Table 3 comparison.
 
 
-## Credits and Citations
+# Credits and Citations
 
 If you use this dataset or the accompanying resources, please cite our paper
 in the proceedings of EMNLP:
