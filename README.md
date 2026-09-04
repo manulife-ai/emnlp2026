@@ -1,6 +1,8 @@
 # When Synthetic Data Hurts: On Catastrophic Forgetting in Skill Retrieval for LLM Agents
 This Readme file serves as a guide for using the two datasets we presented in our paper: **Harbor Trial dataset** which consists of real task execution data and **Track B** dataset which contains synthetic data. Those datasets are intended to finetune your own skill retrieval solutions and recipes and serve as a common ground to compare new catastrophic forgetting mitigation methodologies with our proposed methods.
 
+This Readme also has an example lora finetuning code to mimic the conservative anchor regularization setting described in the Table 3 of our paper.
+
 # Dataset 1: Harbor Trial Dataset
 This section documents the usage of `data/trials_data.parquet`, the Harbor trials we used in our paper. It contains task execution tracjectories and results we collected for research comunity to train new skill routers or perform skill retrieval researches.
 
@@ -264,6 +266,131 @@ python data/trackB/preprocess_trackb.py \
 ```
 
 Once the data preprocessing is done, you can use the data in the output jsonl file to finetune your own skill retriever/reranker and evaluate its performance on this common dataset that we presented in our paper.
+
+# Sample Script for Conservative-Anchor-based Finetuning
+
+`trackb_cons_anchor_example.py` reproduces the **conservative embedding-anchor** rows of Table 3 from *When Synthetic Data Hurts: On Catastrophic Forgetting in Skill Retrieval for LLM Agents*.
+
+It is intentionally limited to one forgetting-mitigation method: attention-only LoRA fine-tuning with an embedding-anchor loss (Cons. Anchor approach listed in Table 3 of our paper). It can run any combination of the paper's Track B data configurations:
+
+| Config | Training data |
+| --- | --- |
+| `A` | Full mix: real positives, paraphrases, and skill-first synthetic rows |
+| `B` | Full mix except skill-first synthetic rows |
+| `C` | Skill-first synthetic rows only; 10% of its query IDs are held out for validation |
+
+## Requirements
+
+Run commands from the repository root (`skill_router`). The script requires:
+
+- Python with `torch`, `transformers`, `peft`, `numpy`, `pandas`, and `pyarrow`.
+- CUDA is recommended for model fine-tuning.
+- The released Track B files in `data/trackBdata`.
+- The full skill retrieval corpus, which is not part of the parquet release:
+  - `skillusage/skills/skills_meta.jsonl`
+  - `skillusage/search_server/index/skills.db`
+- Access to the Hugging Face model `Qwen/Qwen3-Embedding-0.6B`.
+
+First create your own virtual environment and install the dependencies described in requirements.txt
+```bash
+uv venv --python 3.12
+source .venv/bin/activate
+uv pip install -r requirements.txt
+```
+
+Download the required metadata and pre-built retrieval index via the helper script:
+
+```bash
+python scripts/release/download_trackb_index.py
+```
+
+The downloader fetches only `skills_meta.jsonl` and the prebuilt index from the
+`Shiyu-Lab/Skill-Usage` Hugging Face repo. Please make sure you have active internet connection to download from Hugging Face.
+
+## Validate The Release
+
+Before training, verify that the expected parquet files, schemas, and locked row counts are present:
+
+```bash
+python scripts/release/trackb_cons_anchor_example.py --validate-only
+```
+
+A successful run ends with:
+
+```text
+release_valid = True
+```
+
+## Run Conservative-Anchor Regularized Finetuning
+
+
+For example, run a single configuration (Config A):
+
+```bash
+python scripts/release/trackb_cons_anchor_example.py \
+  --data-dir data/trackBdata \
+  --out-dir output/trackb_cons_anchor \
+  --configs A
+```
+
+Run selected configurations only:
+
+```bash
+python scripts/release/trackb_cons_anchor_example.py \
+  --data-dir data/trackBdata \
+  --out-dir output/trackb_cons_anchor \
+  --configs A,C
+```
+
+The default recipe is the Table 3 conservative setting: LoRA rank 8, alpha 16, attention projections only, learning rate `5e-6`, one epoch, and anchor regularization weight `0.1`.
+
+## Outputs And Resuming
+
+The output directory contains:
+
+- `adapters/<config>/anchor/`: LoRA checkpoints, checkpoint log, completion marker, and selected checkpoint.
+- `results.json`: per-query evaluation metrics for each completed configuration.
+- `selections.json`: selected checkpoint metadata.
+- `table3_comparison.json`: reproduced Recall@10 values, paper values, deltas, and tolerance status.
+
+The script skips a configuration that already has results for all three evaluation rings. Training checkpoints are also retained, so rerunning the same command reuses completed work.
+
+Print the current result table without training:
+
+```bash
+python scripts/release/trackb_cons_anchor_example.py \
+  --out-dir output/trackb_cons_anchor \
+  --report-only
+```
+
+## Evaluation
+
+Each selected adapter is evaluated over the full retrieval corpus on three rings using Recall@10:
+
+| Ring | File | Evaluation set |
+| --- | --- | --- |
+| Ring 1 | `eval_set.parquet` | SkillsBench real in-distribution tasks |
+| Ring 2 | `synthetic_eval_set.parquet` | Held-out-skill synthetic tasks |
+| Ring 3 | `ood_eval_set.parquet` | Terminal-Bench 2 real OOD tasks |
+
+
+Small variations are expected because Ring 1 and Ring 3 contain only 21 and 10 queries, respectively.
+
+## Useful Options
+
+```text
+--lambda FLOAT             Anchor-loss coefficient; default: 0.1
+--epochs INT               Fine-tuning epochs; default: 1
+--save-every INT           Optimizer steps between checkpoints; default: 100
+--lora-r INT               Override LoRA rank; default: 8
+--lora-alpha INT           Override LoRA alpha; default: 16
+--lr FLOAT                 Override learning rate; default: 5e-6
+--seed INT                 Random seed; default: 42
+--max-eval-queries INT     Evaluation cap for smoke tests only
+```
+
+Use `--max-eval-queries` only for a smoke test. It changes the reported metrics and should not be used for a Table 3 comparison.
+
 
 ## Credits and Citations
 
