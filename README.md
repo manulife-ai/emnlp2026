@@ -28,8 +28,7 @@ To use this data, please keep in mind the following best practices:
 1. `soft_reward` is a derived metric, computed as
   `n_tests_passed / n_tests_total` from `verifier/ctrf.json`. It is in
   `[0, 1]` and is available only when a usable CTRF test list exists.
-2. `soft_reward` is the preferred outcome signal to construct the finetuning data, use `soft_reward` rather than `reward`. (unless `soft_reward` is not available for certain rows.) 
-   In that case, use `reward` as a surrogate.
+2. `soft_reward` is the preferred outcome signal to construct the finetuning data, use `soft_reward` rather than `reward`. (unless `soft_reward` is not available for certain rows. In that case, use `reward` as a surrogate.) 
 3. There are 79 tasks whose have the same task name in both `skillsbench` and `terminalbench` datasets. Always group or join by
    `benchmark_taskname` and use this combination as a unique instance, do not use `task_name` alone.
 
