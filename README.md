@@ -4,7 +4,7 @@ This Readme file serves as a guide for using the two datasets we presented in ou
 This Readme also has an **example script** to reproduce the conservative anchor regularization experiment described in the Table 3 of our paper. Researchers can use it as a base to deveoper new catastropic-forgetting mitigation methodologies.
 
 # Part 1: Harbor Trial Dataset Details
-This section documents the usage of `data/trials_data.parquet`, the Harbor trials we used in our paper. It contains task execution tracjectories and results we collected for research comunity to train new skill routers or perform skill retrieval researches.
+This section documents the usage of `data/trials_data.parquet`, the Harbor trials we used in our paper. It contains task execution tracjectories and results we collected for research comunity to train new skill routers or perform skill retrieval researches. We curated our harbor trials dataset by sampling tasks from [skillsbench](https://www.skillsbench.ai) and [terminalbench](https://www.tbench.ai).
 
 ## Harbor Data Statistics
 
@@ -23,20 +23,15 @@ The trial data file statistics are as follows. There are in total **1084 valid t
 | Empty `injected_skills` lists | 562 |
 | Missing `cost_usd` | 1,423 |
 
-The file has no duplicate trial keys, invalid soft-reward ranges, invalid test
-counts, or malformed JSON in the JSON-encoded columns. The following are
-important semantic issues, not file-corruption errors:
+To use this data, please keep in mind the following best practices:
 
 1. `soft_reward` is a derived metric, computed as
   `n_tests_passed / n_tests_total` from `verifier/ctrf.json`. It is in
   `[0, 1]` and is available only when a usable CTRF test list exists.
-2. `soft_reward` is the preferred outcome signal to construct the finetuning data, always use `soft_reward` than `reward` unless `soft_reward` is not available for certain rows. 
+2. `soft_reward` is the preferred outcome signal to construct the finetuning data, use `soft_reward` rather than `reward`. (unless `soft_reward` is not available for certain rows.) 
    In that case, use `reward` as a surrogate.
-3. There are 339 exception rows. Some have a recorded reward, but those
-   rewards may describe a partial or failed execution. Exclude exception rows
-   for clean performance summaries unless the failure analysis is the goal.
-4. 79 task names occur in both benchmarks. Always group or join by
-   `(benchmark, task_name)`, never by `task_name` alone.
+3. There are 79 tasks whose have the same task name in both `skillsbench` and `terminalbench` datasets. Always group or join by
+   `benchmark_taskname` and use this combination as a unique instance, do not use `task_name` alone.
 
 ## Schema
 
@@ -74,25 +69,6 @@ The Parquet schema is:
 `failed_test_names` is a native list column. The other structured columns
 listed as JSON strings must be decoded with `json.loads` before use.
 
-## Reward Columns
-
-Our harbor dataset records two related but non-equivalent quantities:
-
-- **`reward`:** the raw Harbor result scalar for the trial. It is the value used
-  by `HarborCache` when replaying a cached result. It should be interpreted
-  together with `exception_type`, since a row with exception indicates the task isn't completed successfully.
-
-- **`soft_reward`:** a post-processed result score. For a CTRF file (Harbor's Common Test Report file depicting the outcome of a task execution) with
-  `n_tests_total` tests, it is
-
-  $$\mathrm{soft\_reward} = \frac{\mathrm{n}_{\mathrm{tests\_passed}}}{\mathrm{n}_{\mathrm{tests\_total}}}.$$
-
-  Skipped tests are excluded from `n_tests_failed` but remain part of
-  `n_tests_total`, matching the harvest implementation. If CTRF is missing or
-  contains no tests, `soft_reward` and the test-count fields are null.
-
-For training data construction, `soft_reward` is preferred as the task-skill supervision signal. The raw `reward` is the fallback when
-`soft_reward` is unavailable. Rows where both values are missing are omitted from task-skill training pairs.
 
 ## Harbor Data Preparation Scripts
 
