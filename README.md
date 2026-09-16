@@ -369,6 +369,8 @@ Use `--max-eval-queries` only for a smoke test. It changes the reported metrics 
 
 # Credits and Citations
 
+Our dataset is published on Huggingface as well, accessible from this link [manulife-emnlp2026](https://huggingface.co/datasets/manulife/emnlp2026_dataset)
+
 If you use this dataset or the accompanying resources, please cite our paper
 in the proceedings of EMNLP:
 
