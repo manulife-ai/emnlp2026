@@ -32,11 +32,11 @@ Examples
 --------
 Validate the data release only::
 
-    python scripts/release/trackb_cons_anchor_example.py --validate-only
+    python ./trackb_cons_anchor_example.py --validate-only
 
 Reproduce the conservative-anchor rows for all configurations::
 
-    python scripts/release/trackb_cons_anchor_example.py \
+    python ./trackb_cons_anchor_example.py \
         --data-dir data/trackB --out-dir ./output/trackb_table3 \
         --configs A,B,C
 
