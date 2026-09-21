@@ -11,7 +11,7 @@ full skill pool. It does not import anything from the ``scripts/synth`` pipeline
 
 Inputs
 ------
-1. Track B data release (``data/trackBdata``):
+1. Track B data release (``data/trackB``):
        train.parquet, val.parquet,
        eval_set.parquet (Ring 1, SkillsBench real, n=21 queries),
        synthetic_eval_set.parquet (Ring 2, held-out-skill synthetic, n=2414),
@@ -37,7 +37,7 @@ Validate the data release only::
 Reproduce the conservative-anchor rows for all configurations::
 
     python scripts/release/trackb_cons_anchor_example.py \
-        --data-dir data/trackBdata --out-dir ./output/trackb_table3 \
+        --data-dir data/trackB --out-dir ./output/trackb_table3 \
         --configs A,B,C
 
 Every stage checkpoints to ``--out-dir``; re-running resumes instead of
@@ -66,11 +66,11 @@ import torch.nn.functional as F
 # Constants
 # ─────────────────────────────────────────────────────────────────────────────
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+REPO_ROOT = Path(__file__).resolve().parent
 
-DEFAULT_DATA_DIR = REPO_ROOT / "data" / "trackBdata"
+DEFAULT_DATA_DIR = REPO_ROOT / "data" / "trackB"
 DEFAULT_OUT_DIR = REPO_ROOT / "data"
-DEFAULT_INDEX_DIR = REPO_ROOT / "data" / "index"
+DEFAULT_INDEX_DIR = REPO_ROOT / "data" / "trackB"
 DEFAULT_SKILLS_META = REPO_ROOT / "data" / "skills_meta.jsonl"
 
 BASE_MODEL = "Qwen/Qwen3-Embedding-0.6B"
