@@ -211,7 +211,7 @@ Run the following data processing commands:
 
 ```bash
 python load_trackb.py \
-	--data-dir data/trackBdata
+	--data-dir data/trackB
 ```
 
 Print the same report as machine-readable JSON:
@@ -259,7 +259,7 @@ Run commands from the repository root (`skill_router`). The script requires:
 
 - Python with `torch`, `transformers`, `peft`, `numpy`, `pandas`, and `pyarrow`.
 - CUDA is recommended for model fine-tuning.
-- The released Track B files in `data/trackBdata`.
+- The released Track B files in `data/trackB`.
 - The full skill retrieval corpus, which is not part of the parquet release:
   - `skillusage/skills/skills_meta.jsonl`
   - `skillusage/search_server/index/skills.db`
