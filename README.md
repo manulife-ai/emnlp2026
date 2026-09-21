@@ -21,13 +21,12 @@ The trial data file statistics are as follows. There are in total **1084 valid t
 | Missing soft rewards and test counts | 307 |
 | Rows with exceptions | 339 |
 | Empty `injected_skills` lists | 562 |
-| Missing `cost_usd` | 1,423 |
 
 To use this data, please keep in mind the following best practices:
 
-1. `soft_reward` is a derived metric, computed as
-  `n_tests_passed / n_tests_total` from `verifier/ctrf.json`. It is in
-  `[0, 1]` and is available only when a usable CTRF test list exists.
+1. `soft_reward` is a derived metric, we computed them as
+  `n_tests_passed / n_tests_total` from Skillsbench and Terminalbench's original `verifier/ctrf.json` files (those verifier/ctrf.json files are provided in the original data repos, linked in the above introduction). It is in
+  `[0, 1]` and is available only when a usable CTRF test list exists. To save researcher's time, we recommend authors using directly our processed soft_rewards provided in this repo. 
 2. `soft_reward` is the preferred outcome signal to construct the finetuning data, use `soft_reward` rather than `reward`. (unless `soft_reward` is not available for certain rows. In that case, use `reward` as a surrogate.) 
 3. There are 79 tasks whose have the same task name in both `skillsbench` and `terminalbench` datasets. Always group or join by
    `benchmark_taskname` and use this combination as a unique instance, do not use `task_name` alone.
@@ -181,7 +180,7 @@ export TRACK_B_DATA="./data/trackB"
 
 ### Python libs and environment setups
 
-1. Use Python 3.12 and install the repository dependencies from `requirements.txt` or `requirements-linux.txt`.
+1. Use Python 3.12 and install the repository dependencies from `requirements.txt`.
 2. Ensure the base model `Qwen/Qwen3-Embedding-0.6B` [Link](https://huggingface.co/Qwen/Qwen3-0.6B) is available, since this is the baseline model to be compared with in our paper. It is recommended to be compared against your new skill retrival/reranking system as well.
 
 
@@ -211,31 +210,31 @@ The scripts contains preprocessing codes to format the the data in the same way 
 Run the following data processing commands:
 
 ```bash
-python data/trackB/load_trackb.py \
+python load_trackb.py \
 	--data-dir data/trackBdata
 ```
 
 Print the same report as machine-readable JSON:
 
 ```bash
-python data/trackB/load_trackb.py \
-	--data-dir data/trackBdata \
+python load_trackb.py \
+	--data-dir data/trackB \
 	--json > trackb_validation.json
 ```
 
 Convert all training and evaluation splits to a separate `processed/` directory:
 
 ```bash
-python data/trackB/preprocess_trackb.py \
-	--data-dir data/trackBdata \
+python preprocess_trackb.py \
+	--data-dir data/trackB \
 	--output-dir ./trackb_processed
 ```
 
 Convert only selected splits (e.g. training fold on):
 
 ```bash
-python data/trackB/preprocess_trackb.py \
-	--data-dir data/trackBdata \
+python preprocess_trackb.py \
+	--data-dir data/trackB \
 	--output-dir ./trackb_processed \
 	--split train.parquet
 ```
@@ -276,7 +275,7 @@ uv pip install -r requirements.txt
 Download the required metadata and pre-built retrieval index via the helper script:
 
 ```bash
-python scripts/release/download_trackb_index.py
+python download_trackb_index.py
 ```
 
 The downloader fetches only `skills_meta.jsonl` and the prebuilt index from the
@@ -287,7 +286,7 @@ The downloader fetches only `skills_meta.jsonl` and the prebuilt index from the
 Before training, verify that the expected parquet files, schemas, and locked row counts are present:
 
 ```bash
-python scripts/release/trackb_cons_anchor_example.py --validate-only
+python trackb_cons_anchor_example.py --validate-only
 ```
 
 A successful run ends with:
@@ -302,8 +301,8 @@ release_valid = True
 For example, run a single configuration (Config A):
 
 ```bash
-python scripts/release/trackb_cons_anchor_example.py \
-  --data-dir data/trackBdata \
+python trackb_cons_anchor_example.py \
+  --data-dir data/trackB \
   --out-dir output/trackb_cons_anchor \
   --configs A
 ```
@@ -311,8 +310,8 @@ python scripts/release/trackb_cons_anchor_example.py \
 Run selected configurations only:
 
 ```bash
-python scripts/release/trackb_cons_anchor_example.py \
-  --data-dir data/trackBdata \
+python trackb_cons_anchor_example.py \
+  --data-dir data/trackB \
   --out-dir output/trackb_cons_anchor \
   --configs A,C
 ```
@@ -333,7 +332,7 @@ The script skips a configuration that already has results for all three evaluati
 Print the current result table without training:
 
 ```bash
-python scripts/release/trackb_cons_anchor_example.py \
+python trackb_cons_anchor_example.py \
   --out-dir output/trackb_cons_anchor \
   --report-only
 ```
