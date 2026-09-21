@@ -22,7 +22,7 @@ from pathlib import Path
 HF_REPO = "Shiyu-Lab/Skill-Usage"
 HF_SKILLS_META = "skills-34k/skills_meta.jsonl"
 HF_INDEX_ARCHIVE = "search_index/search_index.zip"
-REPO_ROOT = Path(__file__).resolve().parents
+REPO_ROOT = Path(__file__).resolve().parent
 DEFAULT_SKILLS_META = REPO_ROOT / "data" / "skills_meta.jsonl"
 DEFAULT_INDEX_DIR = REPO_ROOT / "data" / "index"
 DEFAULT_CACHE_DIR = REPO_ROOT / ".hf_download"
