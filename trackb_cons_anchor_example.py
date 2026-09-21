@@ -70,7 +70,7 @@ REPO_ROOT = Path(__file__).resolve().parent
 
 DEFAULT_DATA_DIR = REPO_ROOT / "data" / "trackB"
 DEFAULT_OUT_DIR = REPO_ROOT / "data"
-DEFAULT_INDEX_DIR = REPO_ROOT / "data" / "trackB"
+DEFAULT_INDEX_DIR = REPO_ROOT / "data" / "index"
 DEFAULT_SKILLS_META = REPO_ROOT / "data" / "skills_meta.jsonl"
 
 BASE_MODEL = "Qwen/Qwen3-Embedding-0.6B"
