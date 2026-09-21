@@ -1,10 +1,10 @@
 # When Synthetic Data Hurts: On Catastrophic Forgetting in Skill Retrieval for LLM Agents
 This Readme file serves as a guide for using the two datasets we presented in our paper: **Harbor Trial dataset** which consists of real task execution data and **Track B** dataset which contains synthetic data. Those datasets are intended to finetune your own skill retrieval solutions and recipes and serve as a common ground to compare new catastrophic forgetting mitigation methodologies with our proposed methods.
 
-This Readme also has an **example script** to reproduce the conservative anchor regularization experiment described in the Table 3 of our paper. Researchers can use it as a base to deveoper new catastropic-forgetting mitigation methodologies.
+This Readme also has an **example script** to reproduce the conservative anchor regularization experiment described in the Table 3 of our paper. Researchers can use it as a base to develop new catastropic-forgetting mitigation methodologies.
 
 # Part 1: Harbor Trial Dataset Details
-This section documents the usage of `data/trials_data.parquet`, the Harbor trials we used in our paper. It contains task execution tracjectories and results we collected for research comunity to train new skill routers or perform skill retrieval researches. We curated our harbor trials dataset by sampling tasks from [skillsbench](https://www.skillsbench.ai) and [terminalbench](https://www.tbench.ai).
+This section documents the usage of `data/trials_data.parquet`, the Harbor trials we used in our paper. It contains task execution trajectories and results we collected for research comunity to train new skill routers or perform skill retrieval research. We curated our harbor trials dataset by sampling tasks from [skillsbench](https://www.skillsbench.ai) and [terminalbench](https://www.tbench.ai).
 
 ## Harbor Data Statistics
 
@@ -87,7 +87,7 @@ pip install pandas pyarrow
 
 ## Preprocess the Trial Data
 
-This step validates required columns decodes JSON columns, adds `effective_reward`, and marks clean/scored and
+This step validates required columns, decodes JSON columns, adds `effective_reward`, and marks clean/scored and
 positive-candidate rows.
 
 ```bash
