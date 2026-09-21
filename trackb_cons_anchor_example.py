@@ -433,7 +433,8 @@ def build_model(lora_r: int | None = None, lora_alpha: int | None = None):
           f"dropout={CONS_LORA_DROPOUT} targets=attention-only")
     tok = load_tokenizer()
     base = AutoModel.from_pretrained(BASE_MODEL, torch_dtype=torch.bfloat16,
-                                     trust_remote_code=True).to(DEVICE)
+                                     trust_remote_code=True,
+                                     attn_implementation="eager").to(DEVICE)
     model = get_peft_model(base, LoraConfig(
         r=r, lora_alpha=alpha, lora_dropout=CONS_LORA_DROPOUT, bias="none",
         target_modules=CONS_TARGETS, task_type="FEATURE_EXTRACTION",
@@ -450,7 +451,8 @@ def load_adapter(ckpt_dir: Path):
     from transformers import AutoModel
     from peft import PeftModel
     base = AutoModel.from_pretrained(BASE_MODEL, torch_dtype=torch.bfloat16,
-                                     trust_remote_code=True).to(DEVICE)
+                                     trust_remote_code=True,
+                                     attn_implementation="eager").to(DEVICE)
     return PeftModel.from_pretrained(base, str(ckpt_dir)).to(DEVICE), load_tokenizer()
 
 
